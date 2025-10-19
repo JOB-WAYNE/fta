@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
   final List<String> _iconPaths = [
     'assets/icons8-home-50.png',
     'assets/icons8-mind-map-50.png',
-    'assets/icons8-cash-48.png',
+    'assets/icons8-growing-money-80.png',
     'assets/icons8-people-50.png',
     'assets/icons8-documents-50.png',
     'assets/icons8-settings-50.png',
