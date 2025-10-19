@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'personal_data_page.dart'; // ✅ Import your next page
+import 'personal_data_page.dart';
+import 'main.dart'; // ✅ Import HomePage so we can navigate back to it
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -28,13 +29,13 @@ class _GetStartedPageState extends State<GetStartedPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: greenBlue),
-          focusedBorder: const UnderlineInputBorder(
+        decoration: const InputDecoration(
+          labelText: 'Country',
+          labelStyle: TextStyle(color: greenBlue),
+          focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: greenBlue),
           ),
-          enabledBorder: const UnderlineInputBorder(
+          enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: greenBlue),
           ),
         ),
@@ -44,7 +45,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // 📞 Phone Number Input (3 segments)
+  // 📞 Phone Number Input
   Widget buildPhoneInput() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -71,7 +72,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // ✅ First segment allows 4 digits
                 buildPhoneSegment(seg1, node1, node2, maxLength: 4),
                 const SizedBox(width: 12),
                 buildPhoneSegment(seg2, node2, node3),
@@ -85,7 +85,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // 🧱 Phone Number Segment Widget
+  // 🧱 Phone Segment
   Widget buildPhoneSegment(
     TextEditingController controller,
     FocusNode current,
@@ -138,12 +138,17 @@ class _GetStartedPageState extends State<GetStartedPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 🔙 Back button
+              // 🔙 Back button (Fixed)
               Align(
                 alignment: Alignment.topLeft,
                 child: TextButton.icon(
                   onPressed: () {
-                    Navigator.pop(context);
+                    // ✅ Always return to HomePage
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                      (route) => false,
+                    );
                   },
                   icon: const Icon(Icons.arrow_back, color: Colors.black54),
                   label: const Text(
@@ -163,7 +168,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
 
               const SizedBox(height: 40),
 
-              // 👆 Icon
               const Center(
                 child: Icon(
                   Icons.touch_app_rounded,
@@ -174,7 +178,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
 
               const SizedBox(height: 10),
 
-              // 🟢 + 🔴 Combined "GET STARTED" vertically closer
               RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(
@@ -204,7 +207,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
               ),
 
               const SizedBox(height: 10),
-
               const Text(
                 'Select country,',
                 style: TextStyle(
@@ -226,15 +228,12 @@ class _GetStartedPageState extends State<GetStartedPage> {
               ),
 
               const SizedBox(height: 16),
-
-              // 🌍 Country input (full width)
               buildTextField('Country'),
 
-              // 📱 Phone input (shorter from the right)
               Align(
                 alignment: Alignment.centerLeft,
                 child: FractionallySizedBox(
-                  widthFactor: 0.85, // 👈 85% width of the screen
+                  widthFactor: 0.85,
                   child: buildPhoneInput(),
                 ),
               ),
@@ -261,7 +260,11 @@ class _GetStartedPageState extends State<GetStartedPage> {
                       onTap: () {},
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        transform: Matrix4.translationValues(0, isHovered ? -3 : 0, 0),
+                        transform: Matrix4.translationValues(
+                          0,
+                          isHovered ? -3 : 0,
+                          0,
+                        ),
                         child: const Text(
                           'Terms of service ',
                           style: TextStyle(
@@ -292,12 +295,15 @@ class _GetStartedPageState extends State<GetStartedPage> {
                   width: 180,
                   child: OutlinedButton(
                     onPressed: () {
-                      final phoneNumber = '+254${seg1.text}${seg2.text}${seg3.text}';
+                      final phoneNumber =
+                          '+254${seg1.text}${seg2.text}${seg3.text}';
                       debugPrint('Full phone: $phoneNumber');
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const PersonalDataPage()),
+                        MaterialPageRoute(
+                          builder: (_) => const PersonalDataPage(),
+                        ),
                       );
                     },
                     style: OutlinedButton.styleFrom(
