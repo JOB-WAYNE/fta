@@ -24,7 +24,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
   final FocusNode node2 = FocusNode();
   final FocusNode node3 = FocusNode();
 
-  // 🧩 Helper for Country Input
+  
   Widget buildTextField(String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -45,7 +45,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // 📞 Phone Number Input
+  
   Widget buildPhoneInput() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -85,7 +85,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // 🧱 Phone Segment
+  
   Widget buildPhoneSegment(
     TextEditingController controller,
     FocusNode current,
@@ -127,7 +127,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // 🧭 Main UI
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,12 +138,12 @@ class _GetStartedPageState extends State<GetStartedPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 🔙 Back button (Fixed)
+              
               Align(
                 alignment: Alignment.topLeft,
                 child: TextButton.icon(
                   onPressed: () {
-                    // ✅ Always return to HomePage
+                    
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => const HomePage()),

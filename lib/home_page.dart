@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'personal_data_page.dart'; // ✅ Import your Personal Data Page
+import 'personal_data_page.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: maroon,
       ),
-      home: HomePage(), // 🔹 no const
+      home: HomePage(), 
     );
   }
 }
@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
 
   static const Color maroon = Color(0xFF800000);
 
-  // ✅ List of image asset paths
+  
   final List<String> _iconPaths = [
     'assets/icons8-home-50.png',
     'assets/icons8-mind-map-50.png',
@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
     'assets/icons8-settings-50.png',
   ];
 
-  // ✅ List of labels
+  
   final List<String> _pageTitles = [
     'Home',
     'Data',
@@ -51,9 +51,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // clean white background
+      backgroundColor: Colors.white, 
 
-      // ✅ Add AppBar with a back button
+      
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -70,7 +70,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
 
-      body: const SizedBox(), // ✅ completely empty body
+      body: const SizedBox(), 
 
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

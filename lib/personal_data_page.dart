@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; // ✅ For clickable link
-import 'get_started_page.dart'; // ✅ Import your Get Started page
-import 'home_page.dart'; // ✅ Import HomePage
+import 'package:url_launcher/url_launcher.dart'; 
+import 'get_started_page.dart'; 
+import 'home_page.dart'; 
 
 class PersonalDataPage extends StatefulWidget {
   const PersonalDataPage({super.key});
@@ -17,7 +17,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
   String? gender;
   bool phoneOwner = false;
 
-  // 🔗 Privacy policy URL
+  
   final Uri _privacyPolicyUrl = Uri.parse("https://example.com/privacy-policy");
 
   Future<void> _launchPrivacyPolicy() async {
@@ -26,7 +26,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
     }
   }
 
-  // 🎨 Color constants
+  
   static const Color maroon = Color(0xFF800000);
   static const Color green = Colors.green;
 
@@ -45,7 +45,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
 
-        // 🟢 Functional Back Arrow
+        
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: maroon),
           onPressed: () {
@@ -65,7 +65,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
             children: [
               const SizedBox(height: 10),
 
-              // 👥 Two icons side by side (person + assignment)
+              
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -77,7 +77,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
 
               const SizedBox(height: 20),
 
-              // 🟩 Green text fields
+              
               buildTextField('Denomination'),
               buildTextField('Place of Worship'),
               buildTextField('Name'),
@@ -86,7 +86,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
               buildTextField('P.O.Box'),
               buildTextField('Residence'),
 
-              // Member Type dropdown (💚 green)
+              
               DropdownButtonFormField<String>(
                 value: memberType,
                 decoration: const InputDecoration(
@@ -114,7 +114,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
 
               const SizedBox(height: 12),
 
-              // Gender dropdown (💚 green)
+              
               DropdownButtonFormField<String>(
                 value: gender,
                 decoration: const InputDecoration(
@@ -140,7 +140,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                 },
               ),
 
-              // Checkbox (💚 green)
+              
               CheckboxListTile(
                 value: phoneOwner,
                 title: const Text(
@@ -158,7 +158,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
 
               const SizedBox(height: 20),
 
-              // 💬 Agreement text
+              
               const Text(
                 'If you proceed you agree to the',
                 textAlign: TextAlign.center,
@@ -169,7 +169,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                 ),
               ),
 
-              // 🔗 Data Privacy Policy link (💚 green)
+              
               GestureDetector(
                 onTap: _launchPrivacyPolicy,
                 child: const Text(
@@ -185,7 +185,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
 
               const SizedBox(height: 25),
 
-              // 🚀 Proceed button (navigates to HomePage)
+              
               SizedBox(
                 width: 180,
                 child: ElevatedButton(
@@ -222,7 +222,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
     );
   }
 
-  // 🧩 Helper for text fields (💚 Green)
+  
   Widget buildTextField(String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
