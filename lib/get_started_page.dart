@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'personal_data_page.dart'; // ✅ Import the Personal Data Page
+import 'personal_data_page.dart'; // ✅ Import your next page
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -71,7 +71,8 @@ class _GetStartedPageState extends State<GetStartedPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                buildPhoneSegment(seg1, node1, node2),
+                // ✅ First segment allows 4 digits
+                buildPhoneSegment(seg1, node1, node2, maxLength: 4),
                 const SizedBox(width: 12),
                 buildPhoneSegment(seg2, node2, node3),
                 const SizedBox(width: 12),
@@ -86,14 +87,18 @@ class _GetStartedPageState extends State<GetStartedPage> {
 
   // 🧱 Phone Number Segment Widget
   Widget buildPhoneSegment(
-      TextEditingController controller, FocusNode current, FocusNode? next) {
+    TextEditingController controller,
+    FocusNode current,
+    FocusNode? next, {
+    int maxLength = 3,
+  }) {
     return Expanded(
       child: TextField(
         controller: controller,
         focusNode: current,
         keyboardType: TextInputType.number,
         cursorColor: greenBlue,
-        maxLength: 3,
+        maxLength: maxLength,
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: greenBlue,
@@ -102,7 +107,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
         ),
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(3),
+          LengthLimitingTextInputFormatter(maxLength),
         ],
         decoration: const InputDecoration(
           counterText: '',
@@ -114,7 +119,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
           ),
         ),
         onChanged: (value) {
-          if (value.length == 3 && next != null) {
+          if (value.length == maxLength && next != null) {
             FocusScope.of(context).requestFocus(next);
           }
         },
@@ -167,39 +172,45 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
-              // 🟢 "GET"
-              const Text(
-                'GET',
-                style: TextStyle(
-                  color: greenBlue,
-                  fontSize: 50,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-              ),
-
-              // 🔴 "STARTED"
-              const Text(
-                'STARTED',
-                style: TextStyle(
-                  color: maroon,
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+              // 🟢 + 🔴 Combined "GET STARTED" vertically closer
+              RichText(
+                textAlign: TextAlign.center,
+                text: const TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'GET\n',
+                      style: TextStyle(
+                        color: greenBlue,
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        height: 0.8,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'STARTED',
+                      style: TextStyle(
+                        color: maroon,
+                        fontSize: 60,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        height: 0.8,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              // 🗒 Instructions
               const Text(
                 'Select country,',
                 style: TextStyle(
                   color: greenBlue,
                   fontSize: 18,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 1,
                 ),
               ),
@@ -209,20 +220,27 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 style: TextStyle(
                   color: greenBlue,
                   fontSize: 18,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 1,
                 ),
               ),
 
               const SizedBox(height: 16),
 
-              // 🧩 Inputs
+              // 🌍 Country input (full width)
               buildTextField('Country'),
-              buildPhoneInput(),
+
+              // 📱 Phone input (shorter from the right)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: 0.85, // 👈 85% width of the screen
+                  child: buildPhoneInput(),
+                ),
+              ),
 
               const SizedBox(height: 20),
 
-              // ⚖️ Agreement Text
               const Text(
                 'If you proceed you agree to the',
                 style: TextStyle(
@@ -233,7 +251,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
               ),
               const SizedBox(height: 4),
 
-              // 📄 Terms of Service
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -241,13 +258,10 @@ class _GetStartedPageState extends State<GetStartedPage> {
                     onEnter: (_) => setState(() => isHovered = true),
                     onExit: (_) => setState(() => isHovered = false),
                     child: GestureDetector(
-                      onTap: () {
-                        // Optional: Navigate to Terms Page Later
-                      },
+                      onTap: () {},
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        transform:
-                            Matrix4.translationValues(0, isHovered ? -3 : 0, 0),
+                        transform: Matrix4.translationValues(0, isHovered ? -3 : 0, 0),
                         child: const Text(
                           'Terms of service ',
                           style: TextStyle(
@@ -273,16 +287,17 @@ class _GetStartedPageState extends State<GetStartedPage> {
 
               const Spacer(),
 
-              // ▶️ Proceed Button
               Center(
                 child: SizedBox(
                   width: 180,
                   child: OutlinedButton(
                     onPressed: () {
+                      final phoneNumber = '+254${seg1.text}${seg2.text}${seg3.text}';
+                      debugPrint('Full phone: $phoneNumber');
+
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const PersonalDataPage()),
+                        MaterialPageRoute(builder: (_) => const PersonalDataPage()),
                       );
                     },
                     style: OutlinedButton.styleFrom(

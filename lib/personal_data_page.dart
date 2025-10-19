@@ -193,7 +193,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                     if (_formKey.currentState!.validate()) {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const HomePage()),
+                        MaterialPageRoute(builder: (context) => HomePage()),
+
                       );
                     }
                   },

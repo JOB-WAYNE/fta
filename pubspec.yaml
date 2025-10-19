@@ -22,4 +22,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/fts-logo.png  # ✅ Your logo is still properly included
+  - assets/
+
