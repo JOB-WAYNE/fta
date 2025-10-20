@@ -18,7 +18,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
   bool phoneOwner = false;
 
   
-  final Uri _privacyPolicyUrl = Uri.parse("https://example.com/privacy-policy");
+  final Uri _privacyPolicyUrl = Uri.parse("");
 
   Future<void> _launchPrivacyPolicy() async {
     if (!await launchUrl(_privacyPolicyUrl, mode: LaunchMode.externalApplication)) {
