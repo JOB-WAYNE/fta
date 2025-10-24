@@ -88,7 +88,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
 
               
               DropdownButtonFormField<String>(
-                value: memberType,
+                initialValue: memberType,
                 decoration: const InputDecoration(
                   labelText: 'Member Type',
                   labelStyle: TextStyle(color: green),
@@ -116,7 +116,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
 
               
               DropdownButtonFormField<String>(
-                value: gender,
+                initialValue: gender,
                 decoration: const InputDecoration(
                   labelText: 'Gender',
                   labelStyle: TextStyle(color: green),

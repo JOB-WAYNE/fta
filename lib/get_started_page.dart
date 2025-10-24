@@ -24,7 +24,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
   final FocusNode node2 = FocusNode();
   final FocusNode node3 = FocusNode();
 
-  
   Widget buildTextField(String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -45,7 +44,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  
   Widget buildPhoneInput() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -85,13 +83,12 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  
   Widget buildPhoneSegment(
-    TextEditingController controller,
-    FocusNode current,
-    FocusNode? next, {
-    int maxLength = 3,
-  }) {
+      TextEditingController controller,
+      FocusNode current,
+      FocusNode? next, {
+        int maxLength = 3,
+      }) {
     return Expanded(
       child: TextField(
         controller: controller,
@@ -127,7 +124,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,16 +134,14 @@ class _GetStartedPageState extends State<GetStartedPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              
               Align(
                 alignment: Alignment.topLeft,
                 child: TextButton.icon(
                   onPressed: () {
-                    
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => const HomePage()),
-                      (route) => false,
+                          (route) => false,
                     );
                   },
                   icon: const Icon(Icons.arrow_back, color: Colors.black54),
@@ -166,7 +160,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 80),
 
               const Center(
                 child: Icon(
@@ -176,7 +170,8 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 ),
               ),
 
-              const SizedBox(height: 10),
+              // 🔹 Increased space between icon and GET text
+              const SizedBox(height: 30),
 
               RichText(
                 textAlign: TextAlign.center,
