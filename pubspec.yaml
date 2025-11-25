@@ -11,7 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  url_launcher: ^6.3.0  # ✅ Added for opening privacy policy links
+  url_launcher: ^6.3.0
+  dio: ^5.9.0
+  http: ^1.1.0        # ✅ Added http package
+  sms_autofill: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -22,5 +25,4 @@ flutter:
   uses-material-design: true
 
   assets:
-  - assets/
-
+    - assets/

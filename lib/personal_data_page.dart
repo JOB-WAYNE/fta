@@ -53,13 +53,15 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        // Reduced vertical padding
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 5),
+              // Reduced top gap
+              const SizedBox(height: 3),
 
               // Smaller Icons - Compact Layout
               Row(
@@ -91,7 +93,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                 ],
               ),
 
-              const SizedBox(height: 8),
+              // Reduced gap after icons
+              const SizedBox(height: 4),
 
               // Input Fields (Narrow + Compact)
               buildTextField('Denomination'),
@@ -102,7 +105,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
               buildTextField('P.O.Box'),
               buildTextField('Residence'),
 
-              const SizedBox(height: 8),
+              // Reduced gap
+              const SizedBox(height: 4),
 
               // Member Type Dropdown
               buildDropdown(
@@ -116,7 +120,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                 },
               ),
 
-              const SizedBox(height: 8),
+              // Reduced gap
+              const SizedBox(height: 4),
 
               // Gender Dropdown
               buildDropdown(
@@ -130,9 +135,9 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                 },
               ),
 
-              // Checkbox (Compact)
+              // Slightly smaller checkbox
               Transform.scale(
-                scale: 0.9,
+                scale: 0.8,
                 child: CheckboxListTile(
                   value: phoneOwner,
                   title: const Text(
@@ -149,7 +154,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                 ),
               ),
 
-              const SizedBox(height: 10),
+              // Reduced gap before terms
+              const SizedBox(height: 8),
 
               // Terms text
               const Text(
@@ -175,7 +181,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                 ),
               ),
 
-              const SizedBox(height: 15),
+              // Reduced gap before button
+              const SizedBox(height: 10),
 
               // Smaller Proceed Button
               SizedBox(
@@ -216,7 +223,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
   // Narrow Text Field (Reduced vertical padding)
   Widget buildTextField(String label) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3.0),
+      // Reduced vertical padding
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 300),
         child: TextFormField(
@@ -241,7 +249,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
   // Narrow Dropdown Builder
   Widget buildDropdown(String label, String? value, List<String> items, ValueChanged<String?> onChanged) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3.0),
+      // Reduced vertical padding
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 300),
         child: DropdownButtonFormField<String>(

@@ -1,7 +1,9 @@
+// get_started_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'personal_data_page.dart';
-import 'main.dart'; // Import HomePage
+import 'package:dio/dio.dart'; // Add Dio
+import 'main.dart';           // For HomePage
+import 'custom_opt_page.dart';  // OTP Page
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -22,7 +24,102 @@ class _GetStartedPageState extends State<GetStartedPage> {
   final FocusNode node2 = FocusNode();
   final FocusNode node3 = FocusNode();
 
-  // ✅ Country field
+  final Dio dio = Dio();
+
+  // Fetch dynamic config
+  Future<Map<String, String>> fetchConfig() async {
+    final res = await dio.get(
+      "https://ftscomms.lakeatts.co.ke:8443/ftscomms/campaigns/bootstrap",
+      queryParameters: {"name": "Stranger-Validation"},
+    );
+    return {
+      "senderId": res.data["senderId"],
+      "templateId": res.data["templateId"],
+      "providerId": res.data["providerId"],
+      "campaignId": res.data["campaignId"],
+    };
+  }
+
+  // Send metadata API
+  Future<String> sendMetadata(String phone, Map<String, String> config) async {
+    final body = {
+      "channel": "sms",
+      "to_address": phone,
+      "senderId": config["senderId"],
+      "providerAccountId": config["providerId"],
+      "campaignId": config["campaignId"],
+      "templateId": config["templateId"],
+      "priority": "normal",
+      "variables": {
+        "validation": "password reset",
+        "OTP": "X",
+        "passcode_duration": 10,
+        "time_measure": "minutes"
+      },
+      "metadata": {"name": "Grace"}
+    };
+
+    final res = await dio.post(
+      "https://ftscomms.lakeatts.co.ke:8443/ftscomms/outbound-messages",
+      data: body,
+    );
+
+    return res.data["id"]; // messageId
+  }
+
+  // Trigger OTP dispatch
+  Future<void> triggerDispatch() async {
+    await dio.post(
+      "https://ftscomms.lakeatts.co.ke:8443/ftscomms/queue/dispatch-next?workerId=worker-1",
+    );
+  }
+
+  // Proceed button action
+  void proceed() async {
+    final phoneNumber = '+254${seg1.text}${seg2.text}${seg3.text}';
+
+    // Validation
+    if (seg1.text.length != 3 || seg2.text.length != 3 || seg3.text.length != 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter a complete phone number"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      // 1️⃣ Fetch dynamic config
+      final config = await fetchConfig();
+
+      // 2️⃣ Send metadata and get messageId
+      final messageId = await sendMetadata(phoneNumber, config);
+
+      // 3️⃣ Trigger dispatch automatically
+      await triggerDispatch();
+
+      // 4️⃣ Navigate to OTP page
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VerifyScreen(
+            //phoneNumber: phoneNumber,
+            messageId: messageId,
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error sending metadata: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Country field
   Widget buildTextField(String label) {
     return Align(
       alignment: Alignment.center,
@@ -50,7 +147,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // ✅ Phone number segment
+  // Phone number segment
   Widget buildPhoneSegment(
       TextEditingController controller,
       FocusNode current,
@@ -95,7 +192,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // ✅ Phone input
+  // Phone input row
   Widget buildPhoneInput() {
     return Align(
       alignment: Alignment.center,
@@ -139,7 +236,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  // ✅ Full Page Layout
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,7 +247,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 🔙 Back button
+              // Back button
               Align(
                 alignment: Alignment.topLeft,
                 child: TextButton.icon(
@@ -179,7 +275,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
               const Icon(Icons.touch_app_rounded, color: maroon, size: 80),
               const SizedBox(height: 20),
 
-              // 🔤 Title
+              // Title
               RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(
@@ -270,41 +366,27 @@ class _GetStartedPageState extends State<GetStartedPage> {
 
               const Spacer(),
 
-              // ✅ ANDROID-STYLE Proceed Button (Updated)
+              // PROCEED BUTTON — NOW INTEGRATED WITH API
               Center(
                 child: Container(
-                  color: Colors.grey[200], // Matches screen background
+                  color: Colors.grey[200],
                   child: SizedBox(
                     width: 160,
                     child: FilledButton.icon(
-                      onPressed: () {
-                        final phoneNumber =
-                            '+254${seg1.text}${seg2.text}${seg3.text}';
-                        debugPrint('Full phone: $phoneNumber');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const PersonalDataPage(),
-                          ),
-                        );
-                      },
-                      icon:
-                      const Icon(Icons.arrow_forward, color: maroon),
+                      onPressed: proceed, // API call integrated
+                      icon: const Icon(Icons.arrow_forward, color: maroon),
                       label: const Text(
                         'Proceed',
                         style: TextStyle(
-                          color: maroon, // ✅ Changed to maroon
+                          color: maroon,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                         ),
                       ),
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.grey[200], // ✅ Matches background
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                          horizontal: 24,
-                        ),
+                        backgroundColor: Colors.grey[200],
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(28),
                           side: const BorderSide(color: maroon, width: 2),
