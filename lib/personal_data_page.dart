@@ -1,8 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'get_started_page.dart';
 import 'home_page.dart';
 
+// ================= MODEL =================
+class Denomination {
+  final int id;
+  final String name;
+
+  Denomination({required this.id, required this.name});
+
+  factory Denomination.fromJson(Map<String, dynamic> json) {
+    return Denomination(
+      id: json["id"],
+      name: json["name"],
+    );
+  }
+}
+
+// ===========================================================
+//                      PERSONAL DATA PAGE
+// ===========================================================
 class PersonalDataPage extends StatefulWidget {
   const PersonalDataPage({super.key});
 
@@ -17,7 +38,40 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
   String? gender;
   bool phoneOwner = false;
 
+  Denomination? selectedDenomination;
+  List<Denomination> denominations = [];
+
   final Uri _privacyPolicyUrl = Uri.parse("");
+
+  static const Color maroon = Color(0xFF800000);
+  static const Color greenBlue = Color(0xFF008080);
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDenominations();
+  }
+
+  // ================= FETCH DENOMINATIONS =================
+  Future<void> fetchDenominations() async {
+    try {
+      final response = await http.get(
+        Uri.parse("https://ftsadmin.lakeatts.co.ke/fts/denominations/all"),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          denominations = data.map((e) => Denomination.fromJson(e)).toList();
+          selectedDenomination = null;
+        });
+      } else {
+        debugPrint("Failed to fetch denominations. Status: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Denomination fetch error: $e");
+    }
+  }
 
   Future<void> _launchPrivacyPolicy() async {
     if (!await launchUrl(_privacyPolicyUrl, mode: LaunchMode.externalApplication)) {
@@ -25,12 +79,10 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
     }
   }
 
-  static const Color maroon = Color(0xFF800000);
-  static const Color greenBlue = Color(0xFF008080);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true, // IMPORTANT
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: const Text(
@@ -47,23 +99,21 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const GetStartedPage()),
+              MaterialPageRoute(builder: (context) => GetStartedPage()),
             );
           },
         ),
       ),
       body: SingleChildScrollView(
-        // Reduced vertical padding
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Reduced top gap
-              const SizedBox(height: 3),
+              const SizedBox(height: 10),
 
-              // Smaller Icons - Compact Layout
+              // ===== ICONS =====
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -73,31 +123,21 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: maroon,
-                        width: 3,
-                      ),
+                      border: Border.all(color: maroon, width: 3),
                     ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 30,
-                      color: maroon,
-                    ),
+                    child: const Icon(Icons.person, size: 30, color: maroon),
                   ),
-                  const SizedBox(width: 10),
-                  const Icon(
-                    Icons.assignment_rounded,
-                    size: 60,
-                    color: maroon,
-                  ),
+                  //const SizedBox(width: 10),
+                  //const Icon(Icons.assignment_rounded, size: 60, color: maroon),
                 ],
               ),
 
-              // Reduced gap after icons
-              const SizedBox(height: 4),
+              const SizedBox(height: 10),
 
-              // Input Fields (Narrow + Compact)
-              buildTextField('Denomination'),
+              // ===== DENOMINATION DROPDOWN =====
+              buildDenominationDropdown(),
+
+              // ===== TEXT FIELDS =====
               buildTextField('Place of Worship'),
               buildTextField('Name'),
               buildTextField('Other Contacts (Optional)'),
@@ -105,69 +145,54 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
               buildTextField('P.O.Box'),
               buildTextField('Residence'),
 
-              // Reduced gap
-              const SizedBox(height: 4),
+              const SizedBox(height: 10),
 
-              // Member Type Dropdown
+              // ===== MEMBER TYPE =====
               buildDropdown(
                 'Member Type',
                 memberType,
                 ['Regular', 'Guest', 'Youth', 'Elder'],
-                    (value) {
-                  setState(() {
-                    memberType = value;
-                  });
-                },
+                    (value) => setState(() => memberType = value),
               ),
 
-              // Reduced gap
-              const SizedBox(height: 4),
+              const SizedBox(height: 10),
 
-              // Gender Dropdown
+              // ===== GENDER =====
               buildDropdown(
                 'Gender',
                 gender,
                 ['Male', 'Female', 'Other'],
-                    (value) {
-                  setState(() {
-                    gender = value;
-                  });
-                },
+                    (value) => setState(() => gender = value),
               ),
 
-              // Slightly smaller checkbox
+              // ===== PHONE OWNER =====
               Transform.scale(
-                scale: 0.8,
+                scale: 0.9,
                 child: CheckboxListTile(
                   value: phoneOwner,
                   title: const Text(
                     'Phone Owner',
-                    style: TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: greenBlue,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                   activeColor: greenBlue,
                   onChanged: (bool? value) {
-                    setState(() {
-                      phoneOwner = value ?? false;
-                    });
+                    setState(() => phoneOwner = value ?? false);
                   },
                 ),
               ),
 
-              // Reduced gap before terms
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
-              // Terms text
               const Text(
                 'If you proceed you agree to the',
-                textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: maroon,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                    color: maroon, fontSize: 14, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 4),
+
               GestureDetector(
                 onTap: _launchPrivacyPolicy,
                 child: const Text(
@@ -176,17 +201,14 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                     color: greenBlue,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.none,
                   ),
                 ),
               ),
 
-              // Reduced gap before button
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-              // Smaller Proceed Button
               SizedBox(
-                width: 140,
+                width: 160,
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
@@ -198,7 +220,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: maroon,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -206,10 +228,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                   child: const Text(
                     'Proceed',
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                        fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
@@ -220,62 +239,129 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
     );
   }
 
-  // Narrow Text Field (Reduced vertical padding)
+  // ===========================================================
+  //                     UI WIDGET HELPERS
+  // ===========================================================
+
   Widget buildTextField(String label) {
     return Padding(
-      // Reduced vertical padding
-      padding: const EdgeInsets.symmetric(vertical: 2.0),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 300),
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: SizedBox(
+        width: 300,
         child: TextFormField(
           decoration: InputDecoration(
             labelText: label,
-            labelStyle: const TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
+            labelStyle:
+            const TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: greenBlue),
             ),
             enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: greenBlue),
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 8),
           ),
           cursorColor: greenBlue,
-          style: const TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: greenBlue,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
-  // Narrow Dropdown Builder
-  Widget buildDropdown(String label, String? value, List<String> items, ValueChanged<String?> onChanged) {
+  Widget buildDropdown(String label, String? initialValue,
+      List<String> items, ValueChanged<String?> onChanged) {
     return Padding(
-      // Reduced vertical padding
-      padding: const EdgeInsets.symmetric(vertical: 2.0),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 300),
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: SizedBox(
+        width: 300,
         child: DropdownButtonFormField<String>(
-          value: value,
+          value: initialValue,
+          menuMaxHeight: 300,
+          dropdownColor: Colors.white,
           decoration: InputDecoration(
             labelText: label,
-            labelStyle: const TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
+            labelStyle:
+            const TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: greenBlue),
             ),
             enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: greenBlue),
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 8),
           ),
           items: items
               .map((item) => DropdownMenuItem(
             value: item,
             child: Text(
               item,
-              style: const TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  color: greenBlue, fontWeight: FontWeight.bold),
             ),
           ))
               .toList(),
           onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+
+  // ================= DENOMINATION DROPDOWN =================
+  Widget buildDenominationDropdown() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: SizedBox(
+        width: 300,
+        child: DropdownButtonFormField<Denomination>(
+          value: selectedDenomination,
+          menuMaxHeight: 300,
+          dropdownColor: Colors.white,
+          icon: const Icon(Icons.arrow_drop_down, color: greenBlue, size: 30),
+          decoration: const InputDecoration(
+            labelText: "Denomination",
+            labelStyle:
+            TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
+            focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: greenBlue)),
+            enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: greenBlue)),
+          ),
+          hint: denominations.isEmpty
+              ? const Text(
+            "Loading...",
+            style:
+            TextStyle(color: greenBlue, fontWeight: FontWeight.bold),
+          )
+              : null,
+          items: denominations.isNotEmpty
+              ? denominations
+              .map((den) => DropdownMenuItem(
+            value: den,
+            child: Text(
+              den.name,
+              style: const TextStyle(
+                color: greenBlue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ))
+              .toList()
+              : [
+            const DropdownMenuItem(
+              value: null,
+              child: Text(
+                "No denominations found",
+                style: TextStyle(
+                    color: Colors.grey, fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+          onChanged: denominations.isNotEmpty
+              ? (value) {
+            setState(() => selectedDenomination = value);
+          }
+              : null,
         ),
       ),
     );
